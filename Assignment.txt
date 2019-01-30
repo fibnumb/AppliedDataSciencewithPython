@@ -81,3 +81,7 @@ def answer_eight():
     return Top15['PopEst'].sort_values(ascending=False).index.tolist()[2]
 
 answer_eight()
+
+Question 9:
+
+
