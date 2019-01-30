@@ -77,12 +77,30 @@ Question 8:
 
 def answer_eight():
     Top15 = answer_one()
-    Top15['PopEst'] = Top15['Energy Supply per Capita'] / Top15['Energy Supply']
+    Top15['PopEst'] = Top15['Energy Supply'] / Top15['Energy Supply per Capita']
     return Top15['PopEst'].sort_values(ascending=False).index.tolist()[2]
+
+
 
 answer_eight()
 
 Question 9:
-a
 
-s
+def answer_nine():
+    Top15 = answer_one()
+    Top15['PopEst'] = Top15['Energy Supply'] / Top15['Energy Supply per Capita']
+    Top15['CitePerPerson'] = Top15['Citable documents'] / Top15['PopEst']
+    return Top15['CitePerPerson'].corr(Top15['Energy Supply per Capita'] )
+
+answer_nine()
+
+Question_10
+
+def answer_ten():
+    Top15 = answer_one()
+    MedRene = Top15['% Renewable'].median()
+   
+    Top15['HighRenew'] = [1 if val >= MedRene else 0 for val in Top15['% Renewable']]
+    return (Top15['HighRenew'])
+
+answer_ten()
