@@ -104,3 +104,163 @@ def answer_ten():
     return (Top15['HighRenew'])
 
 answer_ten()
+
+Question 11:
+
+def answer_eleven():
+    import pandas as pd
+    import numpy as np
+    Top15 = answer_one().reset_index() 
+    ContinentDict  = {'China':'Asia', 
+                  'United States':'North America', 
+                  'Japan':'Asia', 
+                  'United Kingdom':'Europe', 
+                  'Russian Federation':'Europe', 
+                  'Canada':'North America', 
+                  'Germany':'Europe', 
+                  'India':'Asia',
+                  'France':'Europe', 
+                  'South Korea':'Asia', 
+                  'Italy':'Europe', 
+                  'Spain':'Europe', 
+                  'Iran':'Asia',
+                  'Australia':'Australia', 
+                  'Brazil':'South America'}
+    #s.astype('category', categories=['Low', 'Medium', 'High'], ordered=True)
+    
+    #new_df['Asia', 'Australia', 'Europe', 'North America', 'South America'] =
+    Top15['PopEst'] = Top15['Energy Supply'] / Top15['Energy Supply per Capita']
+    Top15['Continent'] = [ContinentDict[country] for country in Top15['Country']]
+    Top15prime = Top15.set_index('Continent').groupby(level = 0)['PopEst'].agg({'size':np.size, 'sum':np.sum, 'mean':np.mean, 'std':np.std})
+    return Top15prime[['size', 'sum', 'mean', 'std' ]]
+
+answer_eleven()
+
+Question 12:
+
+
+def answer_twelve():
+    import pandas as pd
+    import numpy as np
+    Top15 = answer_one()
+    ContinentDict  = {'China':'Asia', 
+                      'United States':'North America', 
+                      'Japan':'Asia', 
+                      'United Kingdom':'Europe', 
+                      'Russian Federation':'Europe', 
+                      'Canada':'North America', 
+                      'Germany':'Europe', 
+                      'India':'Asia',
+                      'France':'Europe', 
+                      'South Korea':'Asia', 
+                      'Italy':'Europe', 
+                      'Spain':'Europe', 
+                      'Iran':'Asia',
+                      'Australia':'Australia', 
+                      'Brazil':'South America'}
+    
+    Top15 = answer_one().reset_index() 
+    Top15['PopEst'] = Top15['Energy Supply'] / Top15['Energy Supply per Capita']
+    Top15['Continent'] = [ContinentDict[country] for country in Top15['Country']]
+    #Top15 = Top15.set_index('Continent').groupby(level = 0)['% Renewable']
+    Top15['bins'] = pd.cut(Top15['% Renewable'],5)
+    return Top15.groupby(['Continent', 'bins']).size()
+
+answer_twelve()
+
+Question 13:
+
+def answer_thirteen():
+    import numpy as np 
+    import pandas as pd
+    Top15 = answer_one()
+    ContinentDict  = {'China':'Asia', 
+                  'United States':'North America', 
+                  'Japan':'Asia', 
+                  'United Kingdom':'Europe', 
+                  'Russian Federation':'Europe', 
+                  'Canada':'North America', 
+                  'Germany':'Europe', 
+                  'India':'Asia',
+                  'France':'Europe', 
+                  'South Korea':'Asia', 
+                  'Italy':'Europe', 
+                  'Spain':'Europe', 
+                  'Iran':'Asia',
+                  'Australia':'Australia', 
+                  'Brazil':'South America'}
+    Top15 = answer_one().reset_index() 
+    Top15['PopEst'] = Top15['Energy Supply'] / Top15['Energy Supply per Capita']
+    Top15['Continent'] = [ContinentDict[country] for country in Top15['Country']]
+        
+    return Top15['PopEst'].apply(lambda x: '{:,}'.format(x))
+
+answer_thirteen()
+
+
+
+Assignment 4
+
+Question 1:
+
+def get_list_of_university_towns():
+    import pandas as pd
+    import numpy as np
+    from scipy.stats import ttest_ind
+    
+    '''Returns a DataFrame of towns and the states they are in from the 
+    university_towns.txt list. The format of the DataFrame should be:
+    DataFrame( [ ["Michigan", "Ann Arbor"], ["Michigan", "Yipsilanti"] ], 
+    columns=["State", "RegionName"]  )
+    
+    The following cleaning needs to be done:
+
+    1. For "State", removing characters from "[" to the end.
+    2. For "RegionName", when applicable, removing every character from " (" to the end.
+    3. Depending on how you read the data, you may need to remove newline character '\n'. '''
+    #x = pd.ExcelFile('gdplev.xls')
+    #y = pd.read_csv('university_towns.txt')
+    df = pd.read_table('university_towns.txt', header = None, names=["RegionName"])
+    #file = open("university_towns.txt","r") 
+    #file.readlines()
+    df['State'] = [x.split('[')[0] if 'edit' in x else np.nan for x in df['RegionName']]
+    #State=[]
+    #RegionName=[]
+    df['State'].fillna(method='ffill', inplace=True)
+    df['RegionName'] = df['RegionName'].str.split('(',expand=True)[0].str.split('[', expand=True)[0].str.rstrip()
+    df = df.loc[df.RegionName != df.State, ['State','RegionName']]
+    #file.close()
+    '''for line in file.readlines():
+        head = list(islice(file, N))
+        file.strip()
+        if line.endswith('[edit]'):
+            statename=line[:line.find('[')].strip()
+        else:
+            State.append(statename)
+            if line.find('(') != -1:
+                line = line[:line.find('(')]
+            RegionName.append(line.strip())'''
+
+        
+    return df
+
+get_list_of_university_towns()
+
+
+
+
+
+Question 2:
+
+def get_recession_start():
+    '''Returns the year and quarter of the recession start time as a 
+    string value in a format such as 2005q3 gdplev.xls'''
+    #A recession is two consecutive quarters of GDP decline, and ending with two consecutive quarters of GDP growth.
+    
+    get_list_of_university_towns()
+    
+    GDPdata = pd.read_excel('gdplev.xls',skiprows=8,header=None,names =['Year','AnnualGDPcurrent','AnnualGDP2009','Dummy1','Quarter','QuarterGDPcurrent','QuarterGDP2009','Dummy2'])
+    GDPdf = pd.DataFrame(GDPdata,columns=['Year','AnnualGDPcurrent','AnnualGDP2009','Dummy1','Quarter','QuarterGDPcurrent','QuarterGDP2009','Dummy2'])
+    
+    return GDPdf
+get_recession_start()
